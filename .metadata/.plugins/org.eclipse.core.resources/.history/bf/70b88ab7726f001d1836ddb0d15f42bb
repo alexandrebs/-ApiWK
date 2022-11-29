@@ -1,0 +1,42 @@
+package br.com.brazuca.brazucaapi.service;
+
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.com.brazuca.brazucaapi.dto.DoadorDTO;
+import br.com.brazuca.brazucaapi.dto.EquipeDTO;
+import br.com.brazuca.brazucaapi.dto.EquipeResponseDTO;
+import br.com.brazuca.brazucaapi.entity.Doador;
+import br.com.brazuca.brazucaapi.entity.Equipe;
+import br.com.brazuca.brazucaapi.exception.BadRequestException;
+import br.com.brazuca.brazucaapi.exception.NotFoundException;
+import br.com.brazuca.brazucaapi.repository.DoadorRepository;
+import br.com.brazuca.brazucaapi.repository.EquipeRepository;
+
+@Service
+public class DoadorService {
+
+	@Autowired
+	private DoadorRepository doadorRepository;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+
+	public Doador inserirDoador(DoadorDTO dto) {
+
+		boolean exists = doadorRepository.findByCpf(dto.getCpf());
+		Doador doador = new Doador();
+		if (!exists) {
+			doador = modelMapper.map(dto, Doador.class);
+			doadorRepository.save(doador);
+		}
+		return doador;
+	}
+
+
+
+}

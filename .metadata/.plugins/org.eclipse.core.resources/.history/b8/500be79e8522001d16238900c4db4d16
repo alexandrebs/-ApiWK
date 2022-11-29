@@ -1,0 +1,139 @@
+package br.com.brazuca.brazucaapi.service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterators;
+
+import br.com.brazuca.brazucaapi.dto.EquipeDTO;
+import br.com.brazuca.brazucaapi.dto.PartidaDTO;
+import br.com.brazuca.brazucaapi.dto.PartidaGoogleDTO;
+
+import br.com.brazuca.brazucaapi.entity.Equipe;
+import br.com.brazuca.brazucaapi.entity.Partida;
+import br.com.brazuca.brazucaapi.util.ScrapingUtil;
+import br.com.brazuca.brazucaapi.util.StatusPartida;
+
+@Service
+public class ScrapingService {
+
+	
+	private ScrapingUtil scrapingUtil ; 
+	@Autowired
+	private PartidaService	partidaService ;
+	@Autowired
+	private EquipeService equipeService ;
+
+
+
+	
+	public void verificaPartidasPeriodo() {
+		scrapingUtil = new ScrapingUtil();
+		
+		Integer quantidadePartidas = partidaService.buscarQuantidadePartidasPeriodo();
+
+		if (quantidadePartidas > 0) {
+			List<Partida> partidas = partidaService.listarPartidasPeriodo();
+
+			for (int i = 0; i < partidas.size(); i++) {
+
+				Partida partida = partidas.get(i);
+				String urlPartida = scrapingUtil.montarUrlGoogle(partida.getEquipeCasa().getNomeSlug(),
+						partida.getEquipeVisitante().getNomeSlug(), partida.getDataHoraPartida().toString());
+
+				PartidaGoogleDTO partidaGoogle = scrapingUtil.obtemInformacoesPartida(urlPartida);
+
+				if (partidaGoogle.getStatusPartida() != StatusPartida.PARTIDA_NAO_INICIADA) {
+
+					partidaService.atualizaPartida(partida, partidaGoogle);
+
+				}
+			}
+			;
+
+		}
+	}
+
+	public void cargaUol() throws IOException {
+
+		List<Partida> partidaDto = new ArrayList<>();
+
+		String strJson = ScrapingUtil.requestUol();
+		ObjectMapper mapper = new ObjectMapper();
+
+		JsonNode node = mapper.readTree(strJson);
+
+		Partida p = new Partida();
+
+		List<Partida> partidaUol = new ArrayList(Arrays.asList(p));
+
+		for (JsonNode jsonNode : node.get("matches")) {
+
+			Partida partida = mapper.readValue(jsonNode.toString(), Partida.class);
+
+			partidaUol.add(partida);
+
+		}
+
+		// cargaEquipeUol(partidaUol);
+
+		cargaPartidaUol(partidaUol);
+	}
+
+	private void cargaEquipeUol(List<Partida> partidaUol) {
+
+		List<@Valid Equipe> listEquipe = new ArrayList<>();
+
+		Iterator<Partida> it = partidaUol.iterator();
+
+		for (Partida c : partidaUol) {
+			if (c.getEquipeCasa() != null) {
+
+				if (!listEquipe.contains(c.getEquipeCasa())) {
+					listEquipe.add(c.getEquipeCasa());
+
+					// equipeService.inserirEquipe(c.getTime1());
+				}
+			}
+			if (c.getEquipeVisitante() != null) {
+				if (!listEquipe.contains(c.getEquipeVisitante())) {
+					listEquipe.add(c.getEquipeVisitante());
+					// equipeService.inserirEquipe(c.getTime2());
+				}
+			}
+		}
+		listEquipe.size();
+	}
+
+	private void cargaCompeticaoUol(List<Partida> partidaUol) {
+
+	}
+
+	private void cargaPartidaUol(List<Partida> partidaUol) {
+		List<@Valid Equipe> listEquipe = new ArrayList<>();
+
+		Iterator<Partida> it = partidaUol.iterator();
+		Partida partida;
+
+		for (Partida c : partidaUol) {
+			if (c.getEquipeCasa() != null) {
+				partidaService.inserirPartidaUol(c);
+
+			}
+		}
+		listEquipe.size();
+	}
+
+}

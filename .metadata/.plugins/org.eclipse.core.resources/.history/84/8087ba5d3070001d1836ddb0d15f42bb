@@ -1,0 +1,43 @@
+package br.com.brazuca.brazucaapi.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import br.com.brazuca.brazucaapi.dto.CompeticaoDTO;
+import br.com.brazuca.brazucaapi.entity.Partida;
+
+@Repository
+public interface PartidaRepository extends JpaRepository<Partida, Long>{
+
+	@Query(name="buscar_quantidade_partidas_periodo ",
+			value = " select count(*) from partida as p where p.data_hora_partida  "
+					+" and date_format(data_hora_partida, '%d/%m/%Y') = date_format(sysdate(), '%d/%m/%Y') "
+					+" and replace(hora_partida, \"h\", \":\") between replace(hora_partida, \"h\", \":\") and TIME_FORMAT(current_time(), '%H:%i') "
+					+"and ifnull(p.tempo_partida, 'vazio') != 'Encerrado' ",
+			nativeQuery = true
+			)
+	public Integer buscarQuantidadePartidasPeriodo();
+
+	
+	
+	
+	@Query(name="listar_partidas_periodo ",
+			value = " select * from partida as p where p.data_hora_partida  "
+			+" and date_format(data_hora_partida, '%d/%m/%Y') = date_format(sysdate(), '%d/%m/%Y') "
+			+" and replace(hora_partida, 'h', ':') between replace(hora_partida, 'h', ':') and TIME_FORMAT(current_time(), '%H:%i') "
+			+"and ifnull(p.tempo_partida, 'vazio') != 'Encerrado' ",
+			nativeQuery= true
+			)
+	public List<Partida> listarPartidasPeriodo();
+	
+
+	@Query(name="listar_competicao",
+			value = " SELECT distinctrow com_id, com_nmcompeticao  FROM partida ",
+			nativeQuery= true
+			)
+	public List<CompeticaoDTO> listarCompeticao();
+
+}

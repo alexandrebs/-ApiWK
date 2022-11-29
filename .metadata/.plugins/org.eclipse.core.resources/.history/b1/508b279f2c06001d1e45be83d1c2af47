@@ -1,0 +1,5 @@
+package br.com.brazuca.brazucaapi.entity;
+
+public class Equipe {
+
+}

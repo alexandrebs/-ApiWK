@@ -1,0 +1,58 @@
+package br.com.brazuca.brazucaapi.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.*;
+
+import org.hibernate.annotations.DynamicUpdate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Table(name = "tb_odd")
+@Entity
+public class Odd implements Serializable{/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
+	@Id
+	@Column(name="odd_id")
+	private Long oddId;
+	
+	
+	@Id
+	@ManyToOne
+	private Partida partida;
+	
+	@Id
+	@ManyToOne
+	private OddTipo oddTipo;
+	
+	@Id
+	@ManyToOne
+	private OddCategoria oddCategoria;
+	
+	@Column(name = "odd_cotacao")
+	private Float cotacao; 
+	
+}

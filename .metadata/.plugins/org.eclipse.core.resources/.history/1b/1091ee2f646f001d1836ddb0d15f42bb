@@ -1,0 +1,72 @@
+package br.com.brazuca.brazucaapi.entity;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name="tb_doador")
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class doador implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
+	
+	@Column(name = "nome")
+	@JsonProperty("nome")
+	private String nome;
+	
+	@Column(name = "cpf")
+	@JsonProperty("nome-cpf")
+	private String cpf;
+	
+	@Column(name = "rg")
+	@JsonProperty("rg")
+	private String rg;
+	
+	@JsonProperty("data_nasc")
+	@Column(name = "data_nasc")
+	private String data_nasc;
+	
+	private String sexo;
+	private String mae;
+	private String pai;
+	private String email;
+	private String cep;
+	private String endereco;
+	private String numero;
+	private String bairro;
+	private String cidade;
+	private String estado;
+	private String telefone_fixo;
+	private String celular; 
+	private String altura;
+	private String peso;
+	private String tipo_sanguineo;
+	
+	
+	
+}

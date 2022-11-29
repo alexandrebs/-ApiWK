@@ -1,0 +1,135 @@
+package br.com.brazuca.brazucaapi.util;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.brazuca.brazucaapi.dto.PartidaGoogleDTO;
+
+import br.com.brazuca.brazucaapi.entity.Partida;
+
+public class ScrapingUtil {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ScrapingUtil.class);
+	private static final String BASE_URL_GOOGLE = "https://www.google.com/search?q=";
+	private static final String COMPLEMENTO_URL_GOOGLE = "&hl=pt-BR";
+	private static final String CASA = "casa";
+	private static final String VISITANTE = "visitante";
+
+	// constantes
+	private static final String RESULTADO_PENALTI = "div[class=imso_mh_s__psn-sc]";
+	private static final String STATUS_PARTIDA = "div[class=imso_mh__lv-m-stts-cont]";
+	private static final String OBTEM_TEMPO_PARTIDA = "span[class=imso_mh__ft-mtch imso-medium-font imso_mh__ft-mtchc]";
+	private static final String NOME_EQUIPE = "div[class=imso_mh__second-tn-ed imso_mh__tnal-cont imso-tnol]";
+	private static final String OBTEM_NOME_EQUIPE_VISITANTE = "div[class=imso_mh__second-tn-ed imso_mh__tnal-cont imso-tnol]";
+	private static final String OBTEM_NOME_EQUIPE_CASA = "div[class=imso_mh__first-tn-ed imso_mh__tnal-cont imso-tnol]";
+	private static final String SELECT_ELEMENTO_IMAGEM = "div[class=imso_mh__t-l-cont kno-fb-ctx]";
+	private static final String OBTEM_LOGO = "img[class=imso_btl__mh-logo]";
+	private static final String OBTEM_PLACAR = "div[class=imso_mh__ma-sc-cont]";
+	private static final String PLACAR_CASA = "div[class=imso_mh__l-tm-sc imso_mh__scr-it imso-light-font]";
+	private static final String PLACAR_VISITANTE = "div[class=imso_mh__r-tm-sc imso_mh__scr-it imso-light-font]";
+
+	public static void main(String[] args) throws IOException {
+
+		
+
+	public static String requestDoadores() throws IOException {
+
+		URL url = new URL("https://s3.amazonaws.com/gupy5/production/companies/52441/emails/1669646172212/e8330670-6f23-11ed-91a8-05f5cf6759fb/data_1.json");
+		HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+		httpConn.setRequestMethod("GET");
+
+		InputStream responseStream = httpConn.getResponseCode() / 100 == 2
+				? httpConn.getInputStream()
+				: httpConn.getErrorStream();
+		Scanner s = new Scanner(responseStream).useDelimiter("\\A");
+		String response = s.hasNext() ? s.next() : "";
+		System.out.println(response);
+		
+		
+		return response;
+	}
+
+
+
+}
+
+/*
+ * PartidaUolDTO partidaUolDto = new PartidaUolDTO();
+ * partidaUolDto.setCompeticao(jsonNode.get("competicao").toString());
+ * partidaUolDto.setIdCompeticao(jsonNode.get("id-competicao").toString());
+ * partidaUolDto.setFase(jsonNode.get("fase").toString());
+ * partidaUolDto.setPosicao(jsonNode.get("posicao").toString());
+ * partidaUolDto.setRodada(jsonNode.get("rodada").toString());
+ * partidaUolDto.setData(jsonNode.get("data").toString());
+ * partidaUolDto.setHorario(jsonNode.get("horario").toString());
+ * 
+ * // for (int i=0; i< jsonNode.get("time1").size(); i++) {
+ * 
+ * Equipe equipeCasa = new Equipe();
+ * equipeCasa.setId(Long.parseLong(jsonNode.get("time1").findPath("id").toString
+ * ()));
+ * equipeCasa.setNomeEquipe(jsonNode.get("time1").findPath("nome-completo").
+ * toString());
+ * equipeCasa.setNomePopular(jsonNode.get("time1").findPath("nome-slug").
+ * toString());
+ * equipeCasa.setSigla(jsonNode.get("time1").findPath("sigla").toString());
+ * equipeCasa.setUrlLogoEquipe(jsonNode.get("time1").findPath("brasao").toString
+ * ()); partidaUolDto.setTime1(equipeCasa);
+ * 
+ * // }
+ * 
+ * // for (Iterator i = jsonNode.get("time2").iterator(); i.hasNext();) {
+ * 
+ * Equipe equipeVisitante = new Equipe();
+ * equipeVisitante.setId(Long.parseLong(jsonNode.get("time2").findPath("id").
+ * toString()));
+ * equipeVisitante.setNomeEquipe(jsonNode.get("time2").findPath("nome-completo")
+ * .toString());
+ * equipeVisitante.setNomePopular(jsonNode.get("time2").findPath("nome-slug").
+ * toString());
+ * equipeVisitante.setSigla(jsonNode.get("time2").findPath("sigla").toString());
+ * equipeVisitante.setSigla(jsonNode.get("time2").findPath("brasao").toString())
+ * ; partidaUolDto.setTime2(equipeVisitante);
+ * 
+ * // }
+ * 
+ * partidaUolDto.setPlacar1(jsonNode.get("placar1").toString());
+ * partidaUolDto.setPlacar2(jsonNode.get("placar2").toString());
+ * 
+ * partidaUolDto.setDesempate_time1(jsonNode.get("desempate_time1").toString());
+ * partidaUolDto.setDesempate_time2(jsonNode.get("desempate_time2").toString());
+ * 
+ * partidaUolDto.setEstadio(jsonNode.get("estadio").toString());
+ * partidaUolDto.setLocal(jsonNode.get("local").toString());
+ * partidaUolDto.setUrlPrejogo(jsonNode.get("url-prejogo").toString());
+ * partidaUolDto.setUrlPosJogo(jsonNode.get("url-posjogo").toString());
+ * partidaUolDto.setUrlVideo(jsonNode.get("url-video").toString());
+ * partidaUolDto
+ * .setEliminouJogoVolta(((jsonNode.get("eliminou-jogo-volta").toString() !=
+ * "false") ? true : false)); partidaUolDto.setClassificouGolsFora(
+ * (jsonNode.get("classificou-gols-fora").toString() != "false") ? true :
+ * false);
+ * 
+ * partidaUolDto.setEstadio(jsonNode.get("estadio").toString());
+ * partidaUolDto.setLocal(jsonNode.get("local").toString());
+ * partidaUolDto.setIdMatch(Long.parseLong(jsonNode.get("id").toString()));
+ * partidaUolDto.setDataHoraMatch(jsonNode.get("datahora").toString());
+ * 
+ */

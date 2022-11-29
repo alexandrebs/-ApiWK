@@ -1,0 +1,187 @@
+package br.com.brazuca.brazucaapi.service;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.json.simple.JSONArray;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterators;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+
+import br.com.brazuca.brazucaapi.dto.CompeticaoDTO;
+import br.com.brazuca.brazucaapi.dto.EquipeDTO;
+import br.com.brazuca.brazucaapi.dto.PartidaDTO;
+import br.com.brazuca.brazucaapi.dto.PartidaGoogleDTO;
+import br.com.brazuca.brazucaapi.entity.Competicao;
+import br.com.brazuca.brazucaapi.entity.Equipe;
+import br.com.brazuca.brazucaapi.entity.Partida;
+import br.com.brazuca.brazucaapi.entity.PartidaJson;
+import br.com.brazuca.brazucaapi.entity.Doador;
+import br.com.brazuca.brazucaapi.util.ScrapingUtil;
+import br.com.brazuca.brazucaapi.util.StatusPartida;
+import io.swagger.models.Model;
+import springfox.documentation.spring.web.json.Json;
+
+@Service
+public class ScrapingService {
+
+	private ScrapingUtil scrapingUtil;
+	@Autowired
+	private PartidaService partidaService;
+	@Autowired
+	private DoadorService doadorService;
+
+	@Autowired
+	private CompeticaoService competicaoService;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	public void verificaPartidasPeriodo() {
+		scrapingUtil = new ScrapingUtil();
+
+		Integer quantidadePartidas = partidaService.buscarQuantidadePartidasPeriodo();
+
+		if (quantidadePartidas > 0) {
+			List<Partida> partidas = partidaService.listarPartidasPeriodo();
+
+			for (int i = 0; i < partidas.size(); i++) {
+
+				Partida partida = partidas.get(i);
+				String urlPartida = scrapingUtil.montarUrlGoogle(partida.getEquipeCasa().getNomeSlug(),
+						partida.getEquipeVisitante().getNomeSlug(), partida.getDataHoraPartida().toString());
+
+				PartidaGoogleDTO partidaGoogle = scrapingUtil.obtemInformacoesPartida(urlPartida);
+
+				if (partidaGoogle.getStatusPartida() != StatusPartida.PARTIDA_NAO_INICIADA) {
+
+					partidaService.atualizaPartida(partida, partidaGoogle);
+
+				}
+			}
+			;
+
+		}
+	}
+
+	public void cargaDoadores() throws IOException, ParseException {
+
+		List<Doador> doadorDTO = new ArrayList<>();
+
+		String  strJson = ScrapingUtil.requestDoadores();
+		
+		Gson gson = new GsonBuilder().create();
+		
+		ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+				.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+		
+		JsonNode node = mapper.readTree(strJson);
+		
+		List<Doador> doa = mapper.readValue(strJson, new TypeReference<List<Doador>>() {} );
+		
+		System.out.println(doa);
+			
+		cargaDoador(doa);
+		
+	}
+
+	private void cargaDoador(List<Doador> doadorList) {
+		
+		List<@Valid Equipe> listEquipe = new ArrayList<>();
+
+		Iterator<Partida> it = partidaUol.iterator();
+
+		for (Partida c : partidaUol) {
+			if (c.getEquipeCasa() != null) {
+
+				if (!listEquipe.contains(c.getEquipeCasa())) {
+					listEquipe.add(c.getEquipeCasa());
+					equipeService.inserirEquipe(modelMapper.map(c.getEquipeCasa(), EquipeDTO.class));
+				}
+			}
+			if (c.getEquipeVisitante() != null) {
+				if (!listEquipe.contains(c.getEquipeVisitante())) {
+					listEquipe.add(c.getEquipeVisitante());
+					equipeService.inserirEquipe(modelMapper.map(c.getEquipeVisitante(), EquipeDTO.class));
+				}
+			}
+		}
+		listEquipe.size();
+	}
+
+	/*private void cargaEquipeUol(List<Partida> partidaUol) {
+
+		List<@Valid Equipe> listEquipe = new ArrayList<>();
+
+		Iterator<Partida> it = partidaUol.iterator();
+
+		for (Partida c : partidaUol) {
+			if (c.getEquipeCasa() != null) {
+
+				if (!listEquipe.contains(c.getEquipeCasa())) {
+					listEquipe.add(c.getEquipeCasa());
+					equipeService.inserirEquipe(modelMapper.map(c.getEquipeCasa(), EquipeDTO.class));
+				}
+			}
+			if (c.getEquipeVisitante() != null) {
+				if (!listEquipe.contains(c.getEquipeVisitante())) {
+					listEquipe.add(c.getEquipeVisitante());
+					equipeService.inserirEquipe(modelMapper.map(c.getEquipeVisitante(), EquipeDTO.class));
+				}
+			}
+		}
+		listEquipe.size();
+	}*/
+
+	private void cargaCompeticaoUol(List<Partida> partidaUol) {
+		List<@Valid Competicao> listCompeticao = new ArrayList<>();
+
+		//Iterator<Partida> it = partidaUol.iterator();
+
+		for (Partida c : partidaUol) {
+			if (c.getCompeticao() != null) {
+
+				if (!listCompeticao.contains(c.getCompeticao())) {
+					listCompeticao.add(c.getCompeticao());
+					competicaoService.inserirCompeticao(modelMapper.map(c.getCompeticao(), CompeticaoDTO.class));
+				}
+			}
+		}
+		listCompeticao.size();
+	}
+
+	private void cargaPartidaUol(List<Partida> partidaUol) throws ParseException {
+		List<@Valid Equipe> listEquipe = new ArrayList<>();
+
+		//Iterator<Partida> it = partidaUol.iterator();
+		//Partida partida;
+
+		for (Partida c : partidaUol) {
+			if (c.getEquipeCasa() != null) {
+				partidaService.inserirPartidaUol(c);
+
+			}
+		}
+		listEquipe.size();
+	}
+
+}

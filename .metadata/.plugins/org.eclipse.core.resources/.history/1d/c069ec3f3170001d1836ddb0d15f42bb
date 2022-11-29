@@ -1,0 +1,160 @@
+package br.com.brazuca.brazucaapi.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.DynamicUpdate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name="partida")
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = false, allowSetters = false)
+@DynamicUpdate
+public class Partida implements Serializable{/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+
+	//@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@Column(name= "partida_id")
+	@JsonProperty("id")
+	private Long id;
+	
+	
+	//@Column(name= "com_id")
+	@Transient
+	@JsonProperty("id-competicao")
+	private String comId;
+	
+	
+	//@Column(name= "com_nmcompeticao")
+	@Transient
+	@JsonProperty("competicao")
+	private String nmCompeticao;
+	
+	@OneToMany(targetEntity = Partida.class, mappedBy = "odd")
+	private List<Odd> odd;
+	
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name="par_id_competicao")
+	private Competicao competicao;
+
+	@Column(name= "par_idsporteNet")
+	private Long idSporteNet;
+	
+	@Transient
+	private String statusPartida;
+	
+	@ManyToOne
+	@JoinColumn(name="equipe_casa_id")
+	@JsonProperty("time1")
+	private Equipe equipeCasa;
+	
+	@ManyToOne
+	@JoinColumn(name="equipe_visitante_id")
+	@JsonProperty("time2")
+	private Equipe equipeVisitante;
+	
+	@Column(name= "par_placar_equipe_casa")
+	@JsonProperty("placar1")
+	private Integer placarEquipeCasa;
+	
+	@Column(name= "par_placar_equipe_visitante")
+	@JsonProperty("placar2")
+	private Integer placarEquipeVisitante;
+	
+	@Column(name= "gols_equipe_casa")
+	private String golsEquipeCasa;
+	
+	@Column(name= "gols_equipe_visitante")
+	private String golsEquipeVisitante;
+	
+	@Column(name= "placar_estendido_equipe_casa")
+	@JsonProperty("penalti1")
+	private Integer placarEstendidoEquipeCasa;
+	
+	@Column(name= "placar_estendido_equipe_visitante")
+	@JsonProperty("penalti2")
+	private Integer placarEstendidoEquipeVisitante;
+	
+	//@JsonFormat(pattern = "dd/MM/yyyy", timezone = "America/Sao_Paulo")
+	@JsonFormat(pattern="yyyy-MM-dd")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name= "data_hora_partida")
+	@JsonProperty("data")
+	private Date dataHoraPartida;
+	
+	@Column(name= "hora_partida")
+	@JsonProperty("horario")
+	private String horaPartida;
+	
+	@Column(name = "par_fase")
+	private String fase;
+	@Column(name = "par_posicao")
+	private String posicao;
+	@Column(name = "par_rodada")
+	private String rodada;
+	
+	@Column(name= "local_partida")
+	private String localPartida;
+
+	@Column(name= "tempo_partida")
+	private String tempoPartida;
+	
+	@Column(name = "par_url_prejogo")
+	private String urlPrejogo;
+
+	@Column(name = "par_url_posjogo")
+	private String urlPosJogo;
+
+	@JsonProperty("url-video")
+	@Column(name = "par_url_video")
+	private String urlVideo;
+
+	@Column(name = "par_eliminou_volta")
+	private boolean eliminouJogoVolta;
+	@Column(name = "par_classificou_Fora")
+	private boolean classificouGolsFora;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm", timezone = "America/Sao_Paulo")
+	@Column(name= "data_hora_atualizacao")
+	private Date ultimaAtualizacao;
+	
+	
+}

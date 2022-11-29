@@ -1,0 +1,15 @@
+package br.com.brazuca.brazucaapi.entity;
+
+import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="equipe")
+public class Equipe implements Serializable{
+
+	private Long id;
+	private String nomeEquipe;
+	private String urlLogoEquipe;
+}

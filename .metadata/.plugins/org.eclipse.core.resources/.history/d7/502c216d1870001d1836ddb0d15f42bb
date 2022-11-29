@@ -1,0 +1,97 @@
+package br.com.brazuca.brazucaapi.dto;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class PercentagemObesosDTO implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
+	private List<ObesosDTO> obesos = new List<ObesosDTO> ;
+	private int total;
+	private float perM;
+	private float perF;
+	
+	
+	
+	public PercentagemObesosDTO() {}
+
+	public PercentagemObesosDTO(List<ObesosDTO> obesos) {
+		super();
+		this.obesos.add(obesos);
+		this.total = obesos.get(0).getTotal()+obesos.get(1).getTotal();
+		
+		if(obesos.get(0).getSexo().toUpperCase()=="MASCULINO") {
+			this.perM =  (obesos.get(0).getTotal() / this.total)*100;	
+		}else {
+			this.perF =  (obesos.get(1).getTotal() / this.total)*100;
+		}
+			
+		if(obesos.get(1).getSexo().toUpperCase()=="MASCULINO") {
+			this.perM =  (obesos.get(1).getTotal() / this.total)*100;	
+		}else {
+			this.perF =  (perF / this.total)*100;
+		}
+		
+	}
+
+	public List<ObesosDTO> getObesos() {
+		return obesos;
+	}
+
+	public void setObesos(List<ObesosDTO> obesos) {
+		this.obesos = obesos;
+	}
+
+	public int getTotal() {
+		return total;
+	}
+
+	public void setTotal(int total) {
+		this.total = total;
+	}
+
+	public float getPerM() {
+		return perM;
+	}
+
+	public void setPerM(float perM) {
+		this.perM = perM;
+	}
+
+	public float getPerF() {
+		return perF;
+	}
+
+	public void setPerF(float perF) {
+		this.perF = perF;
+	}
+
+	
+	
+	
+	
+}

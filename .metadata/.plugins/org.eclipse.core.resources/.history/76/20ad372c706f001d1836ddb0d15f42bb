@@ -1,0 +1,70 @@
+package br.com.brazuca.brazucaapi.service;
+
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.com.brazuca.brazucaapi.dto.EquipeDTO;
+import br.com.brazuca.brazucaapi.dto.EquipeResponseDTO;
+import br.com.brazuca.brazucaapi.entity.Equipe;
+import br.com.brazuca.brazucaapi.exception.BadRequestException;
+import br.com.brazuca.brazucaapi.exception.NotFoundException;
+
+import br.com.brazuca.brazucaapi.repository.EquipeRepository;
+
+@Service
+public class doadorService {
+
+	@Autowired
+	private EquipeRepository equipeRepostory;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	public Equipe buscarEquipeId(Long id) {
+		return equipeRepostory.findById(id)
+				.orElseThrow(() -> new NotFoundException("Nenhuma Equipe Encontrada com o ID: " + id));
+	}
+
+	public EquipeResponseDTO listarEquipe() {
+
+		EquipeResponseDTO equipes = new EquipeResponseDTO();
+		equipes.setEquipes(equipeRepostory.findAll());
+
+		return equipes;
+	}
+
+	public Equipe inserirEquipe(EquipeDTO dto) {
+
+		boolean exists = equipeRepostory.existsByNomeEquipe(dto.getNomeEquipe());
+		Equipe equipe = new Equipe();
+		if (!exists) {
+			// throw new BadRequestException("Já existe uma equipe cadastrada com o nome
+			// informado!");
+
+			equipe = modelMapper.map(dto, Equipe.class);
+			equipeRepostory.save(equipe);
+		}
+		return equipe;
+	}
+
+	public void alterarEquipe(Long id, @Valid EquipeDTO dto) {
+
+		boolean exists = equipeRepostory.existsById(id);
+
+		if (!exists) {
+			throw new BadRequestException("Não foi possível alterar a equipe: ID Inexistente ");
+		}
+		Equipe equipe = modelMapper.map(dto, Equipe.class);
+
+		equipeRepostory.save(equipe);
+	}
+
+	public Equipe buscarEquipePorNome(String nomeEquipe) {
+		return equipeRepostory.findByNomeEquipe(nomeEquipe).orElseThrow(
+				() -> new NotFoundException("Nenhuma equipe encontra com o nome informado: " + nomeEquipe));
+	}
+
+}

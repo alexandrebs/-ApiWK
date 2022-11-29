@@ -1,0 +1,33 @@
+1669670687364	Copy compilation unit
+1669672100968	Rename type 'doador'
+1669672133839	Copy compilation unit
+1669672147196	Rename type 'Doador'
+1669672479546	Extract method 'cargaDoador'
+1669676244467	Copy compilation unit
+1669676282908	Copy compilation unit
+1669676308727	Rename type 'doadorService'
+1669679762290	Copy compilation unit
+1669680193480	Copy compilation unit
+1669743176776	Copy compilation unit
+1669743532708	Copy compilation unit
+1669749698244	Rename field 'total'
+1669758726143	Delete element
+1669758730069	Delete element
+1669758733156	Delete element
+1669758798749	Delete elements
+1669758855166	Delete element
+1669758936087	Delete elements
+1669758942169	Delete element
+1669758978642	Delete element
+1669759194582	Delete element
+1669759198916	Delete element
+1669759202920	Delete element
+1669759205250	Delete element
+1669759223669	Delete element
+1669759226892	Delete element
+1669759229458	Delete element
+1669759234656	Delete element
+1669759237375	Delete element
+1669759239695	Delete element
+1669759773363	Rename package 'br.com.brazuca.brazucaapi.controller'
+1669759922561	Rename package 'br.com.WK_technology.controller'

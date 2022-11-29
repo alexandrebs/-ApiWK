@@ -1,0 +1,55 @@
+package br.com.brazuca.brazucaapi.entity;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name="equipe")
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Equipe implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	//@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "equipe_id")
+	private Long id;
+	
+	@Column(name = "nome_equipe")
+	@JsonProperty("nome-completo")
+	private String nomeEquipe;
+	
+	@Column(name = "nome_popular")
+	@JsonProperty("nome-comum")
+	private String nomePopular;
+	
+	@Column(name = "sg_sigla")
+	private String sigla;
+	
+	@JsonProperty("nome-slug")
+	private String nomeSlug;
+	
+	@Column(name = "url_logo_equipe")
+	@JsonProperty("brasao")
+	private String urlLogoEquipe;
+}

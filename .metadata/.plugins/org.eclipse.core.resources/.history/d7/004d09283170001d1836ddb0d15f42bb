@@ -1,0 +1,52 @@
+package br.com.brazuca.brazucaapi.entity;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.type.TrueFalseType;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "tb_competicao")
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = true, allowSetters = true )
+public class Competicao implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	
+    @Id
+	@Column(name = "com_id", unique = true, nullable = false)
+	private Long id;
+
+	
+	@Column(name = "competicao")
+	private String nomeCompeticao;
+	
+	
+
+	
+}

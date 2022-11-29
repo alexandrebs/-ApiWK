@@ -1,0 +1,46 @@
+package br.com.brazuca.brazucaapi.dto;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class EquipeDTO implements Serializable{
+
+	private static final long serialVersionUID = 1L;
+
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@NotBlank
+	@JsonProperty("nome-completo")
+	private String nomeEquipe;
+	
+	@JsonProperty("nome-comum")
+	private String nomePopular;
+	
+	private String sigla;
+	
+	@JsonProperty("nome-slug")
+	private String nomeSlug;
+	
+	@NotBlank
+	@JsonProperty("brasao")
+	private String urlLogoEquipe;
+}

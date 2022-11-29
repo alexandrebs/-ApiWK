@@ -1,0 +1,129 @@
+package br.com.brazuca.brazucaapi.service;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.com.brazuca.brazucaapi.dto.EquipeDTO;
+import br.com.brazuca.brazucaapi.dto.PartidaDTO;
+import br.com.brazuca.brazucaapi.dto.PartidaGoogleDTO;
+import br.com.brazuca.brazucaapi.dto.PartidaResponseDTO;
+
+import br.com.brazuca.brazucaapi.entity.Equipe;
+import br.com.brazuca.brazucaapi.entity.Partida;
+
+import br.com.brazuca.brazucaapi.exception.NotFoundException;
+import br.com.brazuca.brazucaapi.repository.PartidaRepository;
+
+@Service
+public class PartidaService {
+
+	@Autowired(required = true)
+	private PartidaRepository partidaRepository;
+
+	@Autowired(required = true)
+	private ModelMapper modelMapper;
+
+	@Autowired(required = true)
+	private EquipeService equipeService;
+
+	public Partida buscarPartidaPorId(Long id) {
+
+		return partidaRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Nenhuma partida foi encontrada com o id informado: " + id));
+	}
+
+	public PartidaResponseDTO listarPartidas() {
+		PartidaResponseDTO partidaResponseDto = new PartidaResponseDTO();
+		partidaResponseDto.setPartidas(partidaRepository.findAll());
+
+		return partidaResponseDto;
+	}
+
+	public Partida inserirPartida(@Valid PartidaDTO pardto) {
+
+		Partida partida = modelMapper.map(pardto, Partida.class);
+		partida.setEquipeCasa(equipeService.buscarEquipePorNome(pardto.getNomeEquipeCasa()));
+		partida.setEquipeVisitante(equipeService.buscarEquipePorNome(pardto.getNomeEquipeVisitante()));
+
+		return salvarPartida(partida);
+	}
+
+	@SuppressWarnings("deprecation")
+	public Partida inserirPartidaUol(@Valid Partida partida) throws ParseException {
+
+		if (!partidaRepository.existsById(partida.getId())) {
+			return salvarPartida(partida);
+		}else {
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-YYYY HH:mm:ss");
+			Calendar calendar = Calendar.getInstance();
+			String d = formatter.format(calendar.getTime());
+			Date date = new java.util.Date(formatter.parse(d).getTime());
+			partida.setUltimaAtualizacao(date);
+			return salvarPartida(partida);
+		}
+		
+
+	}
+
+	private Partida salvarPartida(Partida partida) {
+
+		return partidaRepository.save(partida);
+	}
+
+	public void alterarPartida(Long id, @Valid PartidaDTO dto) {
+
+		boolean exists = partidaRepository.existsById(id);
+		if (!exists) {
+			throw new NotFoundException("Não foi possível autalizar a partida: ID Inexistente");
+		}
+
+		Partida partida = buscarPartidaPorId(id);
+		partida.setEquipeCasa(equipeService.buscarEquipePorNome(dto.getNomeEquipeCasa()));
+		partida.setEquipeVisitante(equipeService.buscarEquipePorNome(dto.getNomeEquipeVisitante()));
+		partida.setDataHoraPartida(dto.getDataHoraPartida());
+		partida.setLocalPartida(dto.getLocalPartida());
+		partida.setUltimaAtualizacao(new Date());
+
+		salvarPartida(partida);
+	}
+
+	public void atualizaPartida(Partida partida, PartidaGoogleDTO partidaGoogle) {
+
+		partida.setPlacarEquipeCasa(partidaGoogle.getPlacarEquipeCasa());
+		partida.setPlacarEquipeVisitante(partidaGoogle.getPlacarEquipeVisitante());
+		partida.setGolsEquipeCasa(partidaGoogle.getGolsEquipeCasa());
+		partida.setGolsEquipeVisitante(partidaGoogle.getGolsEquipeVisitante());
+		if ((partidaGoogle.getPlacarEstendidoEquipeCasa() != null)&& (partidaGoogle.getPlacarEstendidoEquipeVisitante()!=null)) {
+			partida.setPlacarEstendidoEquipeCasa(Integer.parseInt(partidaGoogle.getPlacarEstendidoEquipeCasa()));
+			partida.setPlacarEstendidoEquipeVisitante(Integer.parseInt(partidaGoogle.getPlacarEstendidoEquipeVisitante()));
+		}
+		
+		partida.setTempoPartida(partidaGoogle.getTempoPartida());
+
+		salvarPartida(partida);
+	}
+
+	public List<Partida> listarPartidasPeriodo() {
+
+		return partidaRepository.listarPartidasPeriodo();
+	}
+
+	public Integer buscarQuantidadePartidasPeriodo() {
+		// TODO Auto-generated method stub
+		return partidaRepository.buscarQuantidadePartidasPeriodo();
+	}
+
+}

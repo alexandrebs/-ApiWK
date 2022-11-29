@@ -1,0 +1,144 @@
+package br.com.brazuca.brazucaapi.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.DynamicUpdate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class PartidaJson implements Serializable{/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+
+	//@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@JsonProperty("id")
+	private Long id;
+	
+	
+	//@Column(name= "com_id")
+	@JsonProperty("id-competicao")
+	private Long comId;
+	
+	
+	//@Column(name= "com_nmcompeticao")
+	@JsonProperty("competicao")
+	private String nmCompeticao;
+	
+	
+	/*
+	@ManyToOne
+	//@Column(name= "par_id_competicao")
+	@JoinColumn(name="par_id_competicao")
+	private Competicao competicao;
+	*/
+
+	private Long idSporteNet;
+	
+	@Transient
+	private String statusPartida;
+	
+	
+	@JsonProperty("time1")
+	private Equipe equipeCasa;
+	
+
+	@JsonProperty("time2")
+	private Equipe equipeVisitante;
+	
+
+	@JsonProperty("placar1")
+	private Integer placarEquipeCasa;
+	
+
+	@JsonProperty("placar2")
+	private Integer placarEquipeVisitante;
+	
+	
+	private String golsEquipeCasa;
+	
+
+	private String golsEquipeVisitante;
+	
+
+	@JsonProperty("penalti1")
+	private Integer placarEstendidoEquipeCasa;
+	
+
+	@JsonProperty("penalti2")
+	private Integer placarEstendidoEquipeVisitante;
+	
+	//@JsonFormat(pattern = "dd/MM/yyyy", timezone = "America/Sao_Paulo")
+	@JsonFormat(pattern="yyyy-MM-dd")
+	@Temporal(TemporalType.TIMESTAMP)
+	@JsonProperty("data")
+	private Date dataHoraPartida;
+	
+	@Column(name= "hora_partida")
+	@JsonProperty("horario")
+	private String horaPartida;
+	
+
+	private String fase;
+
+	private String posicao;
+
+	private String rodada;
+	
+
+	private String localPartida;
+
+
+	private String tempoPartida;
+	
+
+	private String urlPrejogo;
+
+
+	private String urlPosJogo;
+
+	@JsonProperty("url-video")
+	private String urlVideo;
+
+	private boolean eliminouJogoVolta;
+
+	private boolean classificouGolsFora;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm", timezone = "America/Sao_Paulo")
+	private Date ultimaAtualizacao;
+	
+}

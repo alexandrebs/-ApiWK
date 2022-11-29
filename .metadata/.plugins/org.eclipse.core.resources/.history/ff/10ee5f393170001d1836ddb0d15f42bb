@@ -1,0 +1,21 @@
+package br.com.brazuca.brazucaapi.repository;
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import br.com.brazuca.brazucaapi.entity.Competicao;
+import br.com.brazuca.brazucaapi.entity.Equipe;
+
+@Repository
+public interface CompeticaoRepository extends JpaRepository<Competicao, Long>{
+
+	
+	
+	public Optional<Competicao>  findByNomeCompeticao(String nomeCompeticao);
+	
+	public boolean existsByNomeCompeticao(String nomeCompeticao) ;
+	
+	
+}

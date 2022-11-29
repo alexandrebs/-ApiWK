@@ -1,0 +1,73 @@
+package br.com.brazuca.brazucaapi.service;
+
+import javax.validation.Valid;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.com.brazuca.brazucaapi.dto.CompeticaoDTO;
+import br.com.brazuca.brazucaapi.dto.CompeticaoResponseDTO;
+import br.com.brazuca.brazucaapi.dto.EquipeDTO;
+import br.com.brazuca.brazucaapi.dto.EquipeResponseDTO;
+import br.com.brazuca.brazucaapi.entity.Competicao;
+import br.com.brazuca.brazucaapi.entity.Equipe;
+import br.com.brazuca.brazucaapi.exception.BadRequestException;
+import br.com.brazuca.brazucaapi.exception.NotFoundException;
+import br.com.brazuca.brazucaapi.repository.CompeticaoRepository;
+import br.com.brazuca.brazucaapi.repository.EquipeRepository;
+
+@Service
+public class CompeticaoService {
+
+	@Autowired
+	private CompeticaoRepository competicaoRepository;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
+	public Competicao buscarCompeticaoId(Long id) {
+		return competicaoRepository.findById(id)
+				.orElseThrow(() -> new NotFoundException("Nenhuma Competicao Encontrada com o ID: " + id));
+	}
+
+	public CompeticaoResponseDTO listarCompeticoes() {
+
+		CompeticaoResponseDTO competicoes = new CompeticaoResponseDTO();
+		competicoes.setCompeticoes(competicaoRepository.findAll());
+
+		return competicoes;
+	}
+
+	public Competicao inserirCompeticao(CompeticaoDTO dto) {
+
+		boolean exists = competicaoRepository.existsByNomeCompeticao(dto.getNomeCompeticao());
+		Competicao competicao = new Competicao();
+		if (!exists) {
+			// throw new BadRequestException("Já existe uma equipe cadastrada com o nome
+			// informado!");
+
+			competicao = modelMapper.map(dto, Competicao.class);
+			competicaoRepository.save(competicao);
+		}
+		return competicao;
+	}
+
+	public void alterarCompeticao(Long id, @Valid CompeticaoDTO dto) {
+
+		boolean exists = competicaoRepository.existsById(id);
+
+		if (!exists) {
+			throw new BadRequestException("Não foi possível alterar a equipe: ID Inexistente ");
+		}
+		Competicao competicao = modelMapper.map(dto, Competicao.class);
+
+		competicaoRepository.save(competicao);
+	}
+
+	public Competicao buscarCompeticaoPorNome(String nomeCompeticao) {
+		return competicaoRepository.findByNomeCompeticao(nomeCompeticao).orElseThrow(
+				() -> new NotFoundException("Nenhuma equipe encontra com o nome informado: " + nomeCompeticao));
+	}
+
+}

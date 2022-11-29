@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;brazuca-api/src/main/resources/static/assets&apos; to &apos;dist&apos;" description="Rename resource &apos;assets&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/resources/static/assets" name="dist" stamp="1668041387075" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;brazuca-api/src/main/webapp/WEB-INF/JSP&apos; to &apos;jsp&apos;" description="Rename resource &apos;JSP&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/webapp/WEB-INF/JSP" name="jsp" stamp="1668043618490" updateReferences="true"/>
+</session>
