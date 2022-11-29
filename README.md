@@ -13,3 +13,6 @@ classe "DataBaseConfig" no pacote "config"
 2 - Atualizar as dependências. 
 
 
+Após rodar a aplicação, colocar o seguinte link no browser para acessar a api, que está configurada no padrão swagger
+link:
+http://localhost:8080/swagger-ui.html#/doador-controller
