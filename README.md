@@ -10,7 +10,7 @@ classe "DataBaseConfig" no pacote "config"
 
 1 - Criar banco "doador_amazonas" no MYSQL
 
-2 - Atualizar as dependências. 
+2 - Atualizar as dependências pom.xml 
 
 
 Após rodar a aplicação, colocar o seguinte link no browser para acessar a api, que está configurada no padrão swagger
